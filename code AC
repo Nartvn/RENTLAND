@@ -1,0 +1,81 @@
+/******************************************************
+
+      ____________________________
+     | code by nart.              |
+     | copy remember to write the source!
+     | copy khong ghi nguon sinh con khong co lo djt!
+     |____________________________|
+             (/◕ヮ◕)/
+******************************************************/
+#include <bits/stdc++.h>
+#define int long long
+#define pii pair< int , int >
+#define fi first
+#define se second
+#define pb push_back
+#define mp make_pair
+#define maxn 50500
+using namespace std;
+
+int n;
+int E;
+vector < int > Cx, Cy;
+pii a[maxn], dd[maxn];
+
+bool ccw(int l1,int l2,int l3)
+{
+	return (Cy[l3] - Cy[l1]) * (Cx[l1] - Cx[l2]) < (Cy[l2] - Cy[l1]) * (Cx[l1] - Cx[l3]);
+}
+
+void add(int m, int b)
+{
+	Cx.push_back(m);
+	Cy.push_back(b);
+	while (Cx.size() >= 3 && ccw(Cx.size() - 3, Cx.size() - 2, Cx.size() - 1))
+	{
+		Cx.erase(Cx.end() - 2);
+		Cy.erase(Cy.end() - 2);
+	}
+}
+
+int query(int x)
+{
+	if (E >= Cx.size())
+    {
+        E = Cx.size() - 1;
+    }
+	while (E < Cx.size() - 1 && Cx[E + 1] * x + Cy[E + 1] < Cx[E] * x + Cy[E])
+    {
+        E++;
+    }
+	return Cx[E] * x + Cy[E];
+}
+
+signed main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    cin >> n;
+    for (int i = 0 ; i < n ; ++i)
+    {
+        cin >> a[i].fi >> a[i].se;
+    }
+    sort(a, a + n);
+    int cnt = 0;
+    for (int i = 0 ; i < n ; ++i)
+    {
+        while(cnt > 0 && dd[cnt - 1].se <= a[i].se) cnt--;
+        dd[cnt++] = a[i];
+    }
+    int res;
+    add(dd[0].se, 0);
+    E = 0;
+    for (int i = 0 ; i < cnt ; ++i)
+    {
+        res = query(dd[i].fi);
+        if(i < cnt - 1) add(dd[i + 1].se, res);
+    }
+    cout << res;
+    return 0;
+}
